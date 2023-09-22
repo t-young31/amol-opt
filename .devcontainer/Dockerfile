@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/devcontainers/base:bookworm
 
 RUN apt-get update && \
     apt-get install --yes \
-    cmake make llvm-dev lld clang libclang-dev python3-pip python3.11-venv && \
+    cmake make llvm-dev lld clang libclang-dev python3-pip python3.11-venv clang-tidy && \
     python3 -m venv .venv && \
     . .venv/bin/activate && \
     pip install pre-commit

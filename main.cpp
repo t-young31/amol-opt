@@ -27,12 +27,19 @@ inline bool is_blank(std::string &line) {
   return true;
 }
 
-class Coordinate {
+class Vector3D {
 public:
-  double x;
-  double y;
-  double z;
+  double x = 0.0;
+  double y = 0.0;
+  double z = 0.0;
 
+  Vector3D() = default;
+};
+
+typedef std::vector<Vector3D> Gradient;
+
+class Coordinate : public Vector3D {
+public:
   Coordinate() = default;
 
   static Coordinate from_xyz_line(std::string &line);
@@ -168,24 +175,25 @@ inline double distance(Coordinate &r_i, Coordinate &r_j) {
   return std::sqrt(r_x * r_x + r_y * r_y + r_z * r_z);
 }
 
-inline double energy(Coordinates coordinates) {
+inline double energy(Coordinate *coordinates) {
   auto d = distance(coordinates[0], coordinates[1]) - 0.77; // (r - 0.77 A)
 
   return 0.5 * d * d;
 }
 
-void __enzyme_autodiff(void *, int, Coordinates, Coordinates);
+void __enzyme_autodiff(void *, ...);
 
 int enzyme_dup;
 
 int main() {
 
   auto molecule = Molecule::from_xyz_file("h2.xyz");
-  std::cout << energy(molecule.coordinates) << std::endl;
+  std::cout << energy(molecule.coordinates.data()) << std::endl;
 
-  auto g = Coordinates(molecule.n_atoms());
+  auto g = Gradient(molecule.n_atoms());
 
-  __enzyme_autodiff((void *)energy, enzyme_dup, molecule.coordinates, g);
+  __enzyme_autodiff((void *)energy, enzyme_dup, molecule.coordinates.data(),
+                    g.data());
   std::cout << g[0].x << std::endl;
 
   return 0;
