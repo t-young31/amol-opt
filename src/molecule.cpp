@@ -1,4 +1,5 @@
 #include "molecule.hpp"
+#include "connectivity.hpp"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
@@ -46,7 +47,7 @@ Molecule Molecule::from_xyz_file(std::string filename) {
         "Number of atoms declared didn't equal the number found");
   }
 
+  molecule.connectivity = Connectivity::from_atoms_and_coordinates(
+      molecule.atoms, molecule.coordinates);
   return molecule;
 }
-
-uint Molecule::n_atoms() { return atoms.size(); }

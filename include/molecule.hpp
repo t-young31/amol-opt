@@ -12,7 +12,7 @@ public:
   Atoms atoms;
   Connectivity connectivity;
 
-  uint n_atoms();
+  unsigned int n_atoms() { return atoms.size(); }
   Coordinate *coordinates_ptr() { return coordinates.data(); }
   Vector3D *gradient_ptr() { return gradient.data(); }
 
