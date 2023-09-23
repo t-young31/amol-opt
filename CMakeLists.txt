@@ -15,7 +15,12 @@ project(amopt)
 get_property(importTargetsAfter DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
 message("Imported targets ${importTargetsAfter}")
 
+include_directories("${CMAKE_SOURCE_DIR}/include")
+file(GLOB amopt_SRC CONFIGURE_DEPENDS
+     "src/*.cpp"
+)
+
 set(CMAKE_BUILD_TYPE Debug)
 
-add_executable(amopt main.cpp)
+add_executable(amopt ${amopt_SRC})
 target_link_libraries(amopt PUBLIC LLDEnzymeFlags)
