@@ -13,5 +13,5 @@
     }
   },
 
-  "postStartCommand": ". /.venv/bin/activate && pre-commit install"
+  "postStartCommand": ". /.venv/bin/activate && cd /workspaces/amol-opt && pre-commit install"
 }

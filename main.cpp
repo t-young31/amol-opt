@@ -119,13 +119,39 @@ inline bool Atom::has_valid_symbol() {
   return false;
 }
 
+typedef std::vector<Atom> Atoms;
+
+class AtomIndexPair {
+public:
+  uint i;
+  uint j;
+
+  AtomIndexPair(uint _i, uint _j) {
+    i = _i;
+    j = _j;
+  }
+};
+
+typedef std::vector<AtomIndexPair> AtomIndexPairs;
+
+class Connectivity {
+public:
+  AtomIndexPairs bonds;
+
+  // Connectivity from_molecue(Molecule& molecule);
+};
+
 class Molecule {
 public:
   static Molecule from_xyz_file(std::string filename);
-  std::vector<Coordinate> coordinates;
-  std::vector<Atom> atoms;
+  Coordinates coordinates;
+  Gradient gradient;
+  Atoms atoms;
+  Connectivity connectivity;
 
   uint n_atoms();
+  Coordinate *coordinates_ptr() { return coordinates.data(); }
+  Vector3D *gradient_ptr() { return gradient.data(); }
 
 private:
   Molecule() = default;
@@ -153,6 +179,7 @@ inline Molecule Molecule::from_xyz_file(std::string filename) {
     } else {
       molecule.atoms.push_back(Atom::from_xyz_line(line));
       molecule.coordinates.push_back(Coordinate::from_xyz_line(line));
+      molecule.gradient.push_back(Vector3D());
     }
     i += 1;
   }
@@ -181,20 +208,46 @@ inline double energy(Coordinate *coordinates) {
   return 0.5 * d * d;
 }
 
+class RBForceField {
+public:
+  RBForceField from_molecule(const Molecule &molecule);
+
+  static double energy(Coordinate *coordinates, uint n_atoms,
+                       const RBForceField &ff);
+
+private:
+  RBForceField() = default;
+
+  AtomIndexPairs bonded_pairs;
+  AtomIndexPairs repulsive_pairs;
+};
+
+inline RBForceField RBForceField::from_molecule(const Molecule &molecule) {
+  auto ff = RBForceField();
+
+  return ff;
+}
+
+inline double RBForceField::energy(Coordinate *coordinates, uint n_atoms,
+                                   const RBForceField &ff) {
+  // TODO
+  return 0.0;
+}
+
 void __enzyme_autodiff(void *, ...);
 
-int enzyme_dup;
+int enzyme_dup; // Enzyme duplicate argument
 
 int main() {
 
   auto molecule = Molecule::from_xyz_file("h2.xyz");
   std::cout << energy(molecule.coordinates.data()) << std::endl;
 
-  auto g = Gradient(molecule.n_atoms());
+  __enzyme_autodiff((void *)energy, enzyme_dup, molecule.coordinates_ptr(),
+                    molecule.gradient_ptr());
 
-  __enzyme_autodiff((void *)energy, enzyme_dup, molecule.coordinates.data(),
-                    g.data());
-  std::cout << g[0].x << std::endl;
+  std::cout << molecule.gradient[0].x << std::endl;
 
+  // https://github.com/EnzymeAD/Enzyme/issues/323
   return 0;
 }

@@ -17,5 +17,5 @@ message("Imported targets ${importTargetsAfter}")
 
 set(CMAKE_BUILD_TYPE Debug)
 
-add_executable(amopt tmp.h main.cpp)
+add_executable(amopt main.cpp)
 target_link_libraries(amopt PUBLIC LLDEnzymeFlags)
