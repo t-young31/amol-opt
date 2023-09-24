@@ -14,8 +14,6 @@ public:
   double distance_to(const Vector3D &other) const;
 };
 
-typedef std::vector<Vector3D> Gradient;
-
 double distance(const Vector3D &r_i, const Vector3D &r_j);
 
 #endif /* VECTOR3D_HPP */

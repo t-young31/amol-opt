@@ -51,3 +51,9 @@ Molecule Molecule::from_xyz_file(std::string filename) {
       molecule.atoms, molecule.coordinates);
   return molecule;
 }
+
+double Molecule::rms_gradient() const {
+  double rms = 0.0;
+
+  return 0.0;
+}

@@ -1,30 +1,28 @@
-#include "atom.hpp"
-#include "coordinate.hpp"
 #include "molecule.hpp"
 #include "rbff.hpp"
+#include "sdoptimiser.hpp"
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
-
-void __enzyme_autodiff(void *, ...);
-
-int enzyme_dup;   // Enzyme duplicate argument
-int enzyme_const; // Enzyme constant argument
 
 int main() {
 
   auto molecule = Molecule::from_xyz_file("h2.xyz");
   auto ff = RBForceField::from_molecule(molecule);
-
-  std::cout << RBForceField::energy(molecule.coordinates_ptr(), ff)
-            << std::endl;
-
-  __enzyme_autodiff((void *)RBForceField::energy, enzyme_dup,
-                    molecule.coordinates_ptr(), molecule.gradient_ptr(),
-                    enzyme_const, &ff);
-
+  ff.update_gradient(molecule);
   std::cout << molecule.gradient[0].x << std::endl;
 
-  // https://github.com/EnzymeAD/Enzyme/issues/323
+  // auto c = RBForceField::from_molecule(molecule);
+  molecule.gradient.zero();
+  ff.update_gradient(molecule);
+
+  std::cout << molecule.gradient[0].x << std::endl;
+  return 0;
+
+  auto optimiser = SDOptimiser();
+  optimiser.step_size = 0.1; // Å
+  optimiser.optimise(molecule, ff);
+  // molecule.write_xyz_file("opt.xyz");
+
   return 0;
 }

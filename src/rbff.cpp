@@ -1,6 +1,9 @@
 #include "rbff.hpp"
 #include <iostream>
 
+int enzyme_dup;   // Enzyme duplicate argument
+int enzyme_const; // Enzyme constant argument
+
 RBForceField RBForceField::from_molecule(const Molecule &molecule) {
   auto ff = RBForceField();
 
@@ -38,4 +41,18 @@ double RBForceField::energy(Coordinate *coordinates, const RBForceField &ff) {
   }
 
   return energy;
+}
+
+void RBForceField::update_gradient(Molecule &molecule) const {
+  molecule.gradient.zero();
+
+  std::cout << "enzyme_const " << enzyme_const << '\n';
+  std::cout << "this " << &*this << '\n';
+  std::cout << "harm " << molecule.atoms[0].covalent_radius() << '\n';
+  std::cout << "r_eqm " << harmonic_bonds[0].r_eqm << '\n';
+  std::cout << "rep " << repulsive_pairs.size() << '\n';
+
+  __enzyme_autodiff((void *)RBForceField::energy, enzyme_dup,
+                    molecule.coordinates_ptr(), molecule.gradient_ptr(),
+                    enzyme_const, &*this);
 }

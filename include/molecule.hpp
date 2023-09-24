@@ -3,6 +3,7 @@
 #include "atom.hpp"
 #include "connectivity.hpp"
 #include "coordinate.hpp"
+#include "gradient.hpp"
 
 class Molecule {
 public:
@@ -15,6 +16,7 @@ public:
   unsigned int n_atoms() { return atoms.size(); }
   Coordinate *coordinates_ptr() { return coordinates.data(); }
   Vector3D *gradient_ptr() { return gradient.data(); }
+  double rms_gradient() const;
 
 private:
   Molecule() = default;
