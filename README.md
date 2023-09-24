@@ -7,7 +7,7 @@ Open this repository in a devcontainer
 
 ```bash
 mkdir build
-cmake -B build/ -S . && makc -C build
+cmake -B build/ -S . && make -C build
 # Optimise a molecule and generate opt.xyz
 ./build/amopt h2o.xyz
 ```
