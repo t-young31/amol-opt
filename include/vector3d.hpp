@@ -10,7 +10,8 @@ public:
   double z = 0.0;
 
   Vector3D() = default;
-
+  double norm_squared() const;
+  double norm() const;
   double distance_to(const Vector3D &other) const;
 };
 

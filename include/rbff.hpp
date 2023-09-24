@@ -19,9 +19,6 @@ struct RepulsivePair {
 class RBForceField : public ForceField {
 public:
   static RBForceField from_molecule(const Molecule &molecule);
-
-  // Needs to be static for EnzymeAD
-  static double energy(Coordinate *coordinates, const RBForceField &ff);
   void update_gradient(Molecule &molecule) const override;
 
 private:
@@ -29,5 +26,11 @@ private:
 
   std::vector<HarmonicBond> harmonic_bonds;
   std::vector<RepulsivePair> repulsive_pairs;
+
+  // Needs to be static with raw pointers for EnzymeAD
+  static double harmonic_energy(Coordinate *coordinates, HarmonicBond *bonds,
+                                std::size_t n);
+  static double repulsive_energy(Coordinate *coordinates, RepulsivePair *pairs,
+                                 std::size_t n);
 };
 #endif /* RBFF_HPP */

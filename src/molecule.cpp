@@ -1,6 +1,7 @@
 #include "molecule.hpp"
 #include "connectivity.hpp"
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -53,7 +54,29 @@ Molecule Molecule::from_xyz_file(std::string filename) {
 }
 
 double Molecule::rms_gradient() const {
-  double rms = 0.0;
+  double value = 0.0;
+  for (const auto &v : gradient) {
+    value += v.norm_squared();
+  }
+  value /= static_cast<double>(gradient.size());
+  return std::sqrt(value);
+}
 
-  return 0.0;
+void Molecule::write_xyz_file(const std::string &filename) const {
+  std::ofstream file(filename);
+
+  if (!file.is_open()) {
+    throw std::runtime_error("Failed to open xyz file for writing");
+  }
+
+  file << std::setprecision(6);
+  file << n_atoms() << "\n\n";
+  for (auto i = 0; i < n_atoms(); i++) {
+    auto symbol = atoms[i].atomic_symbol;
+    auto symbol_string =
+        symbol.size() == 1 ? symbol + " " : symbol; // Poor mans std::format
+
+    file << symbol_string << "   " << coordinates[i].x << "   "
+         << coordinates[i].y << "   " << coordinates[i].z << '\n';
+  }
 }

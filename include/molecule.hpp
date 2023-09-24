@@ -13,10 +13,11 @@ public:
   Atoms atoms;
   Connectivity connectivity;
 
-  unsigned int n_atoms() { return atoms.size(); }
+  unsigned int n_atoms() const { return atoms.size(); }
   Coordinate *coordinates_ptr() { return coordinates.data(); }
   Vector3D *gradient_ptr() { return gradient.data(); }
   double rms_gradient() const;
+  void write_xyz_file(const std::string &filename) const;
 
 private:
   Molecule() = default;
