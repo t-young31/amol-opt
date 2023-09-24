@@ -5,9 +5,13 @@
 #include <iostream>
 #include <stdexcept>
 
-int main() {
+int main(int argc, char *argv[]) {
+  if (argc == 1) {
+    throw std::runtime_error("Must be called with a .xyz file");
+  }
 
-  auto molecule = Molecule::from_xyz_file("h2.xyz");
+  auto filename = std::string(argv[1]);
+  auto molecule = Molecule::from_xyz_file(filename);
   auto ff = RBForceField::from_molecule(molecule);
 
   auto optimiser = SDOptimiser();

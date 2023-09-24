@@ -15,12 +15,21 @@ project(amopt)
 get_property(importTargetsAfter DIRECTORY "${CMAKE_SOURCE_DIR}" PROPERTY IMPORTED_TARGETS)
 message("Imported targets ${importTargetsAfter}")
 
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT "-Wall -O3 -ffast-math")
+
 include_directories("${CMAKE_SOURCE_DIR}/include")
 file(GLOB amopt_SRC CONFIGURE_DEPENDS
      "src/*.cpp"
 )
 
-set(CMAKE_BUILD_TYPE Debug)
+# Default the build type to Release
+if (NOT CMAKE_BUILD_TYPE OR CMAKE_BUILD_TYPE STREQUAL "")
+    set(CMAKE_BUILD_TYPE "Release" CACHE STRING "" FORCE)
+endif()
 
 add_executable(amopt ${amopt_SRC})
 target_link_libraries(amopt PUBLIC LLDEnzymeFlags)
+
+message("-- Debug init flags: ${CMAKE_BUILD_TYPE}")
+message("-- Release init flags: ${CMAKE_CXX_FLAGS_RELEASE_INIT}")
